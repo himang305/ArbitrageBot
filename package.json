@@ -2,10 +2,12 @@
   "name": "arbitrage_bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "app.js",
+ "scripts": {
+   "test": "echo \"Error: no test specified\" && exit 1",
+   "start": "node app.js",
+   "dev": "nodemon app.js"
+ },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,6 +18,7 @@
     "ethers": "^5.6.8",
     "express": "^4.18.1",
     "moment-timezone": "^0.5.34",
+    "nodemon": "^2.0.16",
     "web3": "^1.7.3"
   }
 }
