@@ -6,6 +6,7 @@ const { ethers } = require('ethers');
 const fs = require('fs');
 const Tx = require('ethereumjs-tx').Transaction;                       // transaction - build sign broadcast -3 part
 const Web3 = require('web3');
+const CircularJSON = require('circular-json');
 
 
 
@@ -53,17 +54,41 @@ async function checkPair(args) {
   var shouldStartUni = priceUniswap < priceKyberswap ? true : false;
   var spread = Math.abs((priceKyberswap / priceUniswap - 1) * 100);
 
-  console.table([{
+
+  var jsonData = {
     'Input Token': inputTokenSymbol,
     'Output Token': outputTokenSymbol,
     'Input Amount': web3.utils.fromWei(inputAmount, 'Ether'),
     'Uniswap Return': web3.utils.fromWei(uniswapResult, 'Ether'),
     'Kyber Expected Rate': web3.utils.fromWei(kyberResult.expectedRate, 'Ether'),
     'Timestamp': moment().tz('Asia/Calcutta').format(),
-  }])
+    'Spread:': spread,
+};
+var jsonContent = JSON.stringify(jsonData,null,10);
 
-  console.log("Spread: ", spread);
-  const shouldSendTx = spread > 4 ? 1 : 0;
+var stream = fs.createWriteStream("bot_logs.json", {flags:'a'});
+    stream.write(jsonContent + ",");
+    stream.end();
+
+
+// fs.appendFile( "bot_logs.json", jsonContent, 'utf8', function (err) {
+//   if (err) {
+//       console.log("An error occured while writing JSON Object to File.");
+//       return console.log(err);
+//   }
+// });
+
+  // console.table([{
+  //   'Input Token': inputTokenSymbol,
+  //   'Output Token': outputTokenSymbol,
+  //   'Input Amount': web3.utils.fromWei(inputAmount, 'Ether'),
+  //   'Uniswap Return': web3.utils.fromWei(uniswapResult, 'Ether'),
+  //   'Kyber Expected Rate': web3.utils.fromWei(kyberResult.expectedRate, 'Ether'),
+  //   'Timestamp': moment().tz('Asia/Calcutta').format(),
+    
+  // }])
+
+  const shouldSendTx = spread > 3 ? 1 : 0;
 
   if (!shouldSendTx) return;
 
@@ -322,9 +347,6 @@ async function checkPair(args) {
 
   var contracts = new web3.eth.Contract(abi, contract_address);
 
-  // console.log(contracts);
-  // return;
-
   web3.eth.accounts.wallet.add(privateKey);
 
   const tx = await contracts.methods.initFlash({
@@ -337,9 +359,9 @@ async function checkPair(args) {
     fee2: 500,
     unikyb: shouldStartUni,
   })
-
   // const tx = await contracts.methods.approve("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",200);
   const gas = await tx.estimateGas({ from: account1 });
+  // const gas = 1020000;
   const gasPrice = await web3.eth.getGasPrice();
   const nonce = await web3.eth.getTransactionCount(account1);
 
@@ -355,12 +377,14 @@ async function checkPair(args) {
     'chainId': 1
   };
 
-  console.log('ARBITRAGE EXECUTED! PENDING TX TO BE MINED');
-  console.log(tx);
-  const receipt = await web3.eth.sendTransaction(txData);
-  console.log(`Transaction hash: ${receipt.transactionHash}`);
-  console.log('SUCCESS! TX MINED');
+const str = CircularJSON.stringify(tx,null,10);
 
+var stream = fs.createWriteStream("bot_logs.json", {flags:'a'});
+  stream.write(str + ",");
+  const receipt = await web3.eth.sendTransaction(txData);
+  stream.write(`Transaction hash: ${receipt.transactionHash}` + ",");
+  stream.write('SUCCESS! TX MINED' + ",");
+  stream.end();
 }
 
 let priceMonitor

@@ -18,7 +18,18 @@ exec("node index.js >log-file.txt 2>error-file.txt", (error, stdout, stderr) => 
     console.log(`stdout: ${stdout}`);
 });
 
+
 });
+
+app.get("/stop", (req, res) => {
+    res.send("Stop World!");
+  
+  const { exec } = require("child_process");
+  exec("npx kill-port 5001");
+
+  
+  });
+
 
 const PORT = process.env.PORT || 8080;
   

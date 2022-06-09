@@ -3,16 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
- "scripts": {
-   "test": "echo \"Error: no test specified\" && exit 1",
-   "start": "node app.js",
-   "dev": "nodemon app.js"
- },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@ethereumjs/tx": "^3.5.2",
+    "circular-json": "^0.5.9",
     "dotenv": "^16.0.1",
     "ethereumjs-tx": "^2.1.2",
     "ethers": "^5.6.8",
